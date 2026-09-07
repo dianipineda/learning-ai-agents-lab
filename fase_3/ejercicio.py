@@ -55,7 +55,20 @@ def consultar_estado_pedido(numero_pedido: str) -> dict:
 # ¿Qué iría en el dict de tools?
 
 tools = [
-    ___BLANK_1___
+    {
+        "name":"consultar_estado_pedido",
+        "description":"Consulta el estado actual del pedido dado un nuemro de pedido",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "numero_pedido": {
+                    "type": "string",
+                    "description": "El número unico del pedido, ej: 'RP-1001'"
+                }
+            },
+            "required": ["numero_pedido"]
+        }
+    }
 ]
 
 
@@ -75,11 +88,11 @@ print(f"Usuario: {mensaje_usuario}\n")
 #
 # Pista: es igual a las llamadas anteriores + un argumento extra
 
-respuesta_1 = cliente.messages.create(
+respuesta_1 = cliente.messages.create( 
     model="claude-sonnet-5",
     max_tokens=1024,
     messages=[{"role": "user", "content": mensaje_usuario}],
-    ___BLANK_2___
+    tools=tools
 )
 
 print(f"stop_reason: {respuesta_1.stop_reason}")
@@ -98,8 +111,12 @@ print(f"content blocks: {[b.type for b in respuesta_1.content]}\n")
 # Pista: itera respuesta_1.content buscando el bloque con type == "tool_use"
 
 if respuesta_1.stop_reason == "tool_use":
+    bloque_tool = next(
+        (ele for ele in respuesta_1.content if ele.type == "tool_use"),
+        None
+    )
+    print(f"---> {bloque_tool}")
 
-    bloque_tool = ___BLANK_3___
 
     print(f"Claude quiere llamar: {bloque_tool.name}")
     print(f"Con argumentos: {bloque_tool.input}\n")
@@ -125,9 +142,18 @@ if respuesta_1.stop_reason == "tool_use":
     # Pista 1: ejecuta consultar_estado_pedido() con el argumento correcto de bloque_tool.input
     # Pista 2: el content del tool_result debe ser un string → usa json.dumps()
 
-    resultado_funcion = consultar_estado_pedido(___BLANK_4a___)
+    resultado_funcion = consultar_estado_pedido(bloque_tool.input['numero_pedido'])
 
-    mensaje_tool_result = ___BLANK_4b___
+    mensaje_tool_result = {
+        "role": "user",
+        "content": [
+            {
+                "type": "tool_result",
+                "tool_use_id": bloque_tool.id,
+                "content": json.dumps(resultado_funcion)
+            }
+        ]
+    }
 
     print(f"Resultado de la función: {resultado_funcion}\n")
 
@@ -145,7 +171,11 @@ if respuesta_1.stop_reason == "tool_use":
         model="claude-sonnet-5",
         max_tokens=1024,
         tools=tools,
-        messages=___BLANK_5___
+        messages=[
+	        {"role": "user", "content": mensaje_usuario},
+            {"role": "assistant", "content": respuesta_1.content},
+             mensaje_tool_result
+        ]
     )
 
     print(f"Claude: {respuesta_final.content[0].text}")

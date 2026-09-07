@@ -60,34 +60,39 @@ datos = json.loads(texto_limpio)
 
 ---
 
-## Fase 3 — Tool Calling 🔜 SIGUIENTE
-**Archivo a crear:** `fase_3/ejercicio.py`
+## Fase 3 — Tool Calling ✅ COMPLETA
+**Archivo:** `fase_3/ejercicio.py`
 
-**Conceptos a cubrir:**
+**Conceptos cubiertos:**
 - Qué son las "tools" / "functions" en el contexto de LLMs
 - Cómo definir una tool: nombre, descripción, parámetros (JSON Schema)
 - El ciclo tool_use: Claude decide llamar una tool → tú la ejecutas → devuelves resultado → Claude responde
 - `stop_reason == "tool_use"` como señal de que Claude quiere usar una herramienta
-- Rol `"tool"` / `"tool_result"` en el array de messages
+- Rol `"tool_result"` en el array de messages (role `"user"` con content especial)
 - Cuándo Claude llama una tool vs cuándo responde directo
 
-**Blanks propuestos:**
-1. Definir el schema de una tool (dict con name, description, input_schema)
-2. Pasar `tools=` a `.messages.create()`
-3. Detectar `stop_reason == "tool_use"` y extraer `tool_use` block
-4. Ejecutar la función real y construir el mensaje `tool_result`
-5. Segunda llamada con el resultado para que Claude genere respuesta final
+**5 blanks resueltos:** schema de tool (name/description/input_schema), parámetro `tools=`,
+detección de `stop_reason == "tool_use"` + extracción de bloque, ejecución de función +
+construcción del `tool_result`, segunda llamada con historial completo de 3 mensajes.
 
-**Caso de uso sugerido:** agente que puede consultar el estado de un pedido
-(función simulada `consultar_estado_pedido(numero_pedido)` → devuelve dict con estado)
+**Caso de uso:** agente que consulta el estado de un pedido Rappi.
+Función simulada `consultar_estado_pedpi(numero_pedido)` → devuelve dict con estado,
+tiempo restante y repartidor.
 
 ---
 
-## Fase 4 — Agente con memoria ⏳ PENDIENTE
-**Conceptos a cubrir:**
-- Mantener historial de conversación entre turnos (lista `messages` que crece)
-- State management: qué guardar, cuándo limpiar
-- Loop conversacional: input del usuario → append → llamada → append respuesta → repetir
+## Fase 4 — Agente con memoria ✅ COMPLETA
+**Archivo:** `fase_4/ejercicio.py`
+
+**Conceptos cubiertos:**
+- Historial como única "memoria" del LLM: lista `messages` que crece turno a turno
+- Loop externo (turno de usuario) + loop interno (ciclo tool_use): patrón doble while
+- 4 puntos de append: user input → assistant tool_use → tool_result → assistant final
+- Distinción entre `respuesta.content` (para la API, estructura completa) vs `respuesta.content[0].text` (para mostrar al usuario, solo string)
+- El `tool_result` va con `"role": "user"` porque es el programador quien se lo entrega a Claude
+
+**6 blanks resueltos:** inicializar `historial = []`, append mensaje usuario, pasar `messages=historial`,
+append respuesta intermedia con tool_use, append tool_result, append respuesta final.
 
 ---
 
