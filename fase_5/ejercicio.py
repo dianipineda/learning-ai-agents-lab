@@ -92,7 +92,22 @@ def clasificar_mensaje(mensaje_usuario: str) -> dict:
     # Pista: en Fase 2 aprendiste a forzar output estructurado con JSON Schema
     # en el prompt. Aplica ese mismo patrón aquí.
 
-    system_clasificador = """___BLANK_1___"""
+    system_clasificador = """
+        Eres un agente clasificador, experto en clasificar tickets de pedidos
+        tu trabajo es leer el mensaje del usuario, luego clasificarlo en un tipo de categoria y finalmente devolverlo en un formato JSON especifico
+        ### Tipos de clasificacion
+        - "consulta_pedido"  → el usuario quiere saber el estado de un pedido
+        - "queja"           → el usuario está molesto / reporta un problema
+        - "saludo"          → el usuario saluda o hace pregunta general
+        - "otro"            → no encaja en ninguna categoría anterior
+        
+        ### Formato de salida
+        Responde ÚNICAMENTE con el objeto JSON estructurado, sin texto explicativo adicional ni bloques Markdown fuera del JSON.
+
+        Esquema JSON esperado:
+        { "tipo": "<tipo>", "numero_pedido": "<número o null>" }
+
+    """
 
     # -------------------------------------------------------------------
     # BLANK 2 — Llamada al Clasificador
@@ -105,7 +120,12 @@ def clasificar_mensaje(mensaje_usuario: str) -> dict:
     #
     # Pista: es la llamada más simple de todas las fases — sin tools, sin historial
 
-    respuesta_clasificador = ___BLANK_2___
+    respuesta_clasificador = cliente.messages.create(
+        model= "claude-sonnet-5",
+        max_tokens=256,
+        system= system_clasificador,
+        messages=[{"role": "user", "content": mensaje_usuario}]
+    )
 
     texto = respuesta_clasificador.content[0].text.strip()
 
@@ -146,13 +166,33 @@ def ejecutar_respuesta(mensaje_usuario: str, clasificacion: dict) -> str:
     tipo = clasificacion.get("tipo", "otro")
 
     if tipo == "consulta_pedido":
-        system_ejecutor = """___BLANK_3a___"""
+        system_ejecutor = """
+        Eres un asistente de soporte de Rappi especializado en consultar el estado de pedidos.
+        Cuando el usuario pregunte por un pedido, usa la herramienta consultar_estado_pedido
+        con el número de pedido para obtener la información real.
+        Responde de forma amable y breve, indicando el estado, el tiempo restante y el repartidor si aplica.
+        Nunca inventes datos: si el pedido no se encuentra, díselo al usuario y pídele que verifique el número.
+    """
     elif tipo == "queja":
-        system_ejecutor = """___BLANK_3b___"""
+        system_ejecutor = """
+        Eres un asistente de soporte de Rappi empatico y resolutivo.
+        El usuario está molesto o reporta un problema: empieza con una disculpa sincera,
+        reconoce lo que le pasó y ofrece una solución o el siguiente paso concreto.
+        Sé breve, cálido y no le eches la culpa al usuario.
+    """
     elif tipo == "saludo":
-        system_ejecutor = """___BLANK_3c___"""
+        system_ejecutor = """
+        Eres un asistente amigable de soporte de Rappi.
+        Responde el saludo o la pregunta general de forma cálida y breve,
+        y ofrece ayuda con sus pedidos. No consultes ningún pedido.
+    """
     else:
-        system_ejecutor = """___BLANK_3d___"""
+        system_ejecutor = """
+        Eres un asistente de soporte de Rappi.
+        El mensaje del usuario no está relacionado con pedidos, quejas ni saludos.
+        Reconoce amablemente que no puedes ayudar con eso y explica que solo puedes
+        ayudar con el estado de pedidos y problemas con ellos.
+    """
 
     # -------------------------------------------------------------------
     # BLANK 4 — Llamada al Ejecutor con tools (solo si es consulta_pedido)
@@ -172,7 +212,7 @@ def ejecutar_respuesta(mensaje_usuario: str, clasificacion: dict) -> str:
         max_tokens=1024,
         system=system_ejecutor,
         messages=[{"role": "user", "content": mensaje_usuario}],
-        tools=___BLANK_4___
+        tools=tools_ejecutor#?___BLANK_4___
     )
 
     # -------------------------------------------------------------------
