@@ -50,7 +50,8 @@ Sin texto extra ni bloques Markdown.
 #   class Estado(TypedDict):
 #       campo: tipo
 class Estado(TypedDict):
-    ___BLANK_1___
+    mensaje:str
+    clasificacion: dict
 
 
 # -------------------------------------------------------------------
@@ -76,7 +77,7 @@ def clasificar(estado: Estado) -> dict:
         texto = texto.split("\n", 1)[1].rsplit("```", 1)[0]
     clasificacion = json.loads(texto)
 
-    return ___BLANK_2___
+    return {"clasificacion": clasificacion}
 
 
 # -------------------------------------------------------------------
@@ -86,8 +87,8 @@ def clasificar(estado: Estado) -> dict:
 # 2. Registra el nodo con un nombre y la función:    builder.add_node("nombre", funcion)
 #
 # Pista: el nombre es un string libre; es el que usarás en los edges.
-builder = ___BLANK_3a___
-___BLANK_3b___
+builder = StateGraph(Estado)
+builder.add_node("clasificar", clasificar)
 
 
 # -------------------------------------------------------------------
@@ -96,8 +97,8 @@ ___BLANK_3b___
 # Conecta START → "clasificar" y "clasificar" → END.
 #
 # Pista: builder.add_edge(origen, destino)
-___BLANK_4a___
-___BLANK_4b___
+builder.add_edge(START,"clasificar")
+builder.add_edge("clasificar",END)
 
 
 # -------------------------------------------------------------------
@@ -108,7 +109,7 @@ ___BLANK_4b___
 # devuelve el state FINAL.
 #
 # Pista: grafo = builder.compile()   /   grafo.invoke({"mensaje": ...})
-grafo = ___BLANK_5a___
+grafo = builder.compile()
 
 print("Grafo mínimo LangGraph — escribe 'salir' para terminar\n")
 
@@ -118,6 +119,6 @@ while True:
         print("¡Hasta luego!")
         break
 
-    estado_final = ___BLANK_5b___
+    estado_final = grafo.invoke({"mensaje": user_input})
 
     print(f"\n  state final → {estado_final}\n")

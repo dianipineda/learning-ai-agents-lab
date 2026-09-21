@@ -17,3 +17,7 @@ Recursos para revisar antes o durante cada fase. Agrega los enlaces aquí a medi
 - **Conceptos básicos de grafos** (nodos, aristas, grafos dirigidos, ciclos):
   https://www.youtube.com/watch?v=pzca71UtH-A
   Ver antes del ejercicio 1. Para LangGraph basta con nodo, arista, dirección y ciclo.
+
+- **Curso completo de LangChain, LangGraph y Agentes IA con Python** (Udemy):
+  https://rappi.udemy.com/course/curso-completo-langchain-langgraph-y-agentes-ia-con-python/
+  Curso general; usa las secciones de LangGraph como apoyo para los ejercicios 1-3.

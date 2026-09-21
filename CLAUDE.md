@@ -9,12 +9,20 @@ Objetivo final: construir un orquestador multi-agente autónomo de soporte de pe
 - Model: `claude-sonnet-5`
 - Workspace ID: `wrkspc_013t1vonrMTGakoTg7Pj92DB`
 - `.env` requiere: `ANTHROPIC_API_KEY` y `ANTHROPIC_WORKSPACE_ID`
-- Dependencias: `anthropic`, `python-dotenv` (ver `requirements.txt`)
+- Dependencias: `anthropic`, `python-dotenv`, `langgraph` (ver `requirements.txt`)
 - Idioma de trabajo: español
 
+## Estructura del repo
+- `ejercicios/fase_N/` — cuaderno con blancos `___BLANK_X___` para quien aprende.
+- `soluciones/fase_N/` — las mismas fases resueltas.
+- Al crear una fase o ejercicio nuevo: escribir la versión con blancos en `ejercicios/` y la
+  resuelta en `soluciones/`, con la misma ruta relativa. Correr siempre desde la raíz.
+- Mientras el aprendiz resuelve en `ejercicios/`, no copiar respuestas desde `soluciones/`:
+  guiar con pistas.
+
 ## Estado actual
-**Última fase completada:** Fase 6 — Sistema multi-agente completo (Agente de Soporte de Pedidos)
-**Siguiente fase:** Fase 7 — Harness / LangGraph
+**Última fase completada:** Fase 7 — Harness / LangGraph
+**Siguiente fase:** Fase 8 — Human-in-the-loop y guardrails (luego Fase 9 y Fase 10, el proyecto final: el orquestador multi-agente autónomo)
 
 ## Protocolo de sesión
 1. `/clear` entre fases (no dentro de una fase)
@@ -32,7 +40,10 @@ Objetivo final: construir un orquestador multi-agente autónomo de soporte de pe
 | 4 | Agente con memoria | ✅ Completa |
 | 5 | Orquestador con 2 agentes | ✅ Completa |
 | 6 | Sistema multi-agente completo (Agente de Soporte de Pedidos) | ✅ Completa |
-| 7 | Harness / LangGraph | 🔜 Siguiente |
+| 7 | Harness / LangGraph | ✅ Completa |
+| 8 | Human-in-the-loop y guardrails | 🔜 Pendiente |
+| 9 | Evaluación y supervisor multi-agente | 🔜 Pendiente |
+| 10 | Proyecto final: el orquestador | 🔜 Pendiente |
 
 ## Cómo actualizar este archivo
 Al completar una fase: cambiar su estado de 🔜 a ✅ y actualizar "Estado actual".
