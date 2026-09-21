@@ -20,9 +20,13 @@ Objetivo final: construir un orquestador multi-agente autónomo de soporte de pe
 - Mientras el aprendiz resuelve en `ejercicios/`, no copiar respuestas desde `soluciones/`:
   guiar con pistas.
 
+## Plantilla
+`plantilla/` (`agent_harness`) es una base profesional para arrancar agentes propios; NO es un ejercicio (sin blancos) ni parte del curriculum.
+Es la referencia recomendada como arquitectura base. Lee `plantilla/README.md` y `plantilla/CLAUDE.md` antes de tocarla. Corre desde `plantilla/`.
+
 ## Estado actual
 **Última fase completada:** Fase 7 — Harness / LangGraph
-**Siguiente fase:** Fase 8 — Human-in-the-loop y guardrails (luego Fase 9 y Fase 10, el proyecto final: el orquestador multi-agente autónomo)
+**Siguiente fase:** Fase 8 — Human-in-the-loop y guardrails (luego Fase 9, Fase 10 —el proyecto final: el orquestador multi-agente autónomo— y Fase 11 —endurecerlo para producción—). Los ejercicios de las fases 8 a 11 ya están creados; falta que el aprendiz los resuelva.
 
 ## Protocolo de sesión
 1. `/clear` entre fases (no dentro de una fase)
@@ -44,6 +48,7 @@ Objetivo final: construir un orquestador multi-agente autónomo de soporte de pe
 | 8 | Human-in-the-loop y guardrails | 🔜 Pendiente |
 | 9 | Evaluación y supervisor multi-agente | 🔜 Pendiente |
 | 10 | Proyecto final: el orquestador | 🔜 Pendiente |
+| 11 | Agente listo para producción (ventana, streaming, tools seguras) | 🔜 Pendiente |
 
 ## Cómo actualizar este archivo
 Al completar una fase: cambiar su estado de 🔜 a ✅ y actualizar "Estado actual".

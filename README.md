@@ -1,15 +1,15 @@
 # AI Agents Lab
 
 Laboratorio de aprendizaje de ingeniería de agentes de IA con la API de Anthropic.
-Ejercicios estilo "crucigrama" por fases (`fase_1` … `fase_10`; la fase 10 es el proyecto final), en las carpetas `ejercicios/` y `soluciones/`.
+Ejercicios estilo "crucigrama" por fases (`fase_1` … `fase_11`; la fase 10 es el proyecto final y la 11 lo endurece para producción) más una **plantilla lista para usar** en `plantilla/`, en las carpetas `ejercicios/` y `soluciones/`.
 
 ## Estructura del repositorio
 
 ```
 ejercicios/    ← cuaderno de ejercicios: código con blancos ___BLANK_X___ para que TÚ los resuelvas
-  fase_1/ … fase_10/
+  fase_1/ … fase_11/
 soluciones/    ← las mismas fases ya resueltas, para comparar o desatascarte
-  fase_1/ … fase_10/
+  fase_1/ … fase_11/
 ```
 
 **Cómo usarlo para aprender:**
@@ -374,5 +374,43 @@ aprueba si TODAS las pasadas superan el 80 %.
 - **Esperado:** guardrails `✓`, 3 pasadas con `✓/✗` por ruta, tools, efectos y final, y `LISTO PARA PRODUCCIÓN`.
 - **Si falla:** un `✗` aislado puede ser ruido del LLM; mira la traza del caso antes de tocar prompts.
   Ajusta `PRESUPUESTO_TOKENS` en el ejercicio 1 si "presupuesto" corta conversaciones normales.
+
+### Fase 11 — Agente listo para producción (`ejercicios/fase_11/`)
+
+Extensión de la fase 10 a partir de los huecos detectados frente al cuaderno de LangChain/LangGraph. Los 5
+ejercicios son **independientes y no usan la API** (se prueban sin gastar); cada uno termina con código
+de salida 0 (OK) o 1 (algún chequeo falló). Conviene tener resuelta la fase 10 antes, pero no es requisito técnico.
+
+| # | Archivo | Tema | Blancos |
+|---|---------|------|---------|
+| 1 | `ejercicio_1.py` | Ventana deslizante: recortar el historial sin romper turnos ni pares `tool_use`/`tool_result` | 6 |
+| 2 | `ejercicio_2.py` | Streaming con LangGraph: `updates`, `values`, `custom` e `interrupt` dentro del stream | 7 |
+| 3 | `ejercicio_3.py` | Tools seguras: idempotencia de `crear_reclamo`, circuit breaker y métricas (reloj inyectado) | 10 |
+| 4 | `ejercicio_4.py` | Resultados de tools no confiables: sobre de datos, escape de etiquetas, límite de tamaño, prompt injection | 4 |
+| 5 | `ejercicio_5.py` | **Opcional.** Memoria de largo plazo por usuario: dedupe, TTL, aislamiento, privacidad | 4 |
+
+- **Ejecuta** (uno por uno): `python ejercicios/fase_11/ejercicio_N.py`
+- **Esperado:** una lista de `✓` y `Resultado: OK`.
+- **Si falla:**
+  - `NameError: ___BLANK_X___`: aún queda un blanco por resolver.
+  - Ej. 1: si "toda ventana es válida" falla, tu corte parte un turno o empieza con un `tool_result`.
+  - Ej. 2: el chunk de `updates` trae solo lo que devolvió el nodo; el estado acumulado sale en `values`.
+  - Ej. 3: un fallo no debe guardarse como "ya hecho", o el reintento nunca se ejecuta.
+  - Ej. 4: detectar sobre el texto crudo (antes de recortar) y neutralizar las etiquetas antes de recortar.
+- **Reto opcional final:** integrar las piezas en el orquestador de la fase 10 (ventana en `supervisor`/`especialista`,
+  `EjecutorSeguro` alrededor de las tools, `armar_tool_result` para los resultados).
+
+### Plantilla — `agent_harness` (`plantilla/`)
+
+Base profesional para arrancar un agente autónomo propio (uno o varios agentes) con el *harness* completo. Destila las fases 7 a 11
+en un paquete modular: config por entorno, cliente LLM intercambiable, tools con política (sensible / validación / idempotencia),
+`ToolRunner` como única puerta de ejecución, ventana deslizante, circuit breaker, sanitización de resultados, memoria por hilo (SQLite)
+y por usuario, logs JSON por `thread_id`, streaming de eventos y un eval con puerta de calidad.
+
+- **Ejecuta** (desde `plantilla/`): `python -m pytest -q` · `python -m agent_harness.evals --fake` · `python -m agent_harness.evals` (API real) · `python -m agent_harness` (chat).
+- **Léela primero:** `plantilla/README.md` (arquitectura y decisiones) y `plantilla/CLAUDE.md` (reglas para el asistente).
+- **Para usarla en otro proyecto:** cópiala o referencia `@plantilla/` desde Claude Code.
+- **Estado:** 48 pruebas verdes con un `FakeLLM`; **no se ha corrido contra la API real**.
+- No es material de ejercicios: no tiene blancos y no forma parte del curriculum.
 
 ---

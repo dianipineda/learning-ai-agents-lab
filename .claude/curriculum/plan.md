@@ -235,3 +235,22 @@ Estado: los 3 ejercicios están creados en `ejercicios/` y `soluciones/`; el apr
 
 **Criterio de éxito:** el eval supera el umbral de forma estable en varias corridas, ningún camino termina en error 400 ni en traceback, y las acciones con efectos reales nunca se ejecutan sin aprobación.
 **Pendientes heredados:** caso límite de la fase 7 con `recursion_limit=3` (cerrado en el ejercicio 1 con `cerrar_hilo`), `content[0].text` de la fase 5 y la tool opcional `consultar_reclamo` (siguen abiertos).
+
+---
+
+## Fase 11 — Agente listo para producción 🔜 PENDIENTE (extensión de la fase 10)
+**Origen:** análisis del cuaderno de LangChain/LangGraph (`cuaderno_de_trabajo.pdf`, temas 4–6) contra las fases 1–9. Lo ya cubierto no se repite; aquí van los huecos que sí aportan a un agente autónomo.
+**Objetivo:** endurecer el orquestador en costo (ventana), visibilidad (streaming) y seguridad operativa (tools idempotentes, breaker, métricas, resultados no confiables). Todo sin API: se prueba con relojes y datos inyectados.
+**Archivos:** `ejercicios/fase_11/ejercicio_1..5.py` y `soluciones/fase_11/ejercicio_1..5.py` (independientes entre sí; cada uno sale con código 0/1).
+
+**Ejercicios (creados):**
+1. **Ventana deslizante** (6 blancos): `recortar_historial` corta solo en fronteras de turno (usuario con texto, no `tool_result`); si el último turno no cabe se devuelve completo; el estado guarda todo, el modelo recibe la ventana. Trampa: `historial[-n:]` produce 400.
+2. **Streaming** (7 blancos): `stream_mode` `updates` (solo lo que devolvió el nodo), `values` (estado acumulado, el último chunk = estado final), `custom` (`get_stream_writer()`, la vía para progreso con el SDK crudo); `__interrupt__` dentro del stream y reanudación con `Command(resume=...)` en el mismo thread. `messages` no aplica al SDK crudo.
+3. **Tools seguras** (10 blancos): idempotencia con clave normalizada (solo se guarda lo exitoso), circuit breaker (umbral de fallos seguidos, enfriamiento, llamada de prueba), métricas por tool (las bloqueadas no cuentan) y `EjecutorSeguro` que los junta; reloj inyectado.
+4. **Resultados no confiables** (4 blancos): sobre `<resultado_tool>`, neutralizar etiquetas, límite de caracteres, detección de patrones sobre el texto crudo y advertencia. Defensa en capas: la acción peligrosa sigue protegida por la aprobación humana de la fase 8.
+5. **Memoria de largo plazo por usuario — opcional** (4 blancos): dedupe, TTL, `k` recientes, aislamiento por usuario, filtro de datos sensibles, extracción por reglas.
+
+**Fuera de alcance (a propósito):** memoria vectorial/embeddings (Anthropic no ofrece embeddings: exigiría otro proveedor), infraestructura (API REST, colas, dashboard, sandboxes, Postgres) y paralelismo (no hay caso natural en soporte de pedidos).
+**Estado:** ejercicios creados; el aprendiz aún no los resuelve. Verificados: las 5 soluciones dan OK (exit 0); mutaciones deliberadas hacen fallar los chequeos; las versiones con blancos fallan con `NameError`.
+**Reto opcional:** integrar ventana, `EjecutorSeguro` y `armar_tool_result` en el orquestador de la fase 10 y volver a correr su eval.
+**Criterio de éxito:** los 4 ejercicios obligatorios dan `Resultado: OK` y el aprendiz sabe explicar por qué cada blanco es necesario (p. ej. por qué un fallo no se guarda en la idempotencia).

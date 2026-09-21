@@ -1,0 +1,16 @@
+[project]
+name = "agent-harness"
+version = "0.1.0"
+description = "Base para agentes autónomos (uno o varios) sobre la API de Anthropic + LangGraph"
+requires-python = ">=3.11"
+dependencies = ["anthropic", "langgraph", "langgraph-checkpoint-sqlite", "python-dotenv"]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.pytest.ini_options]
+pythonpath = [".", "tests"]
+testpaths = ["tests"]
+
+[tool.setuptools.packages.find]
+include = ["agent_harness*"]
