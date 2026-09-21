@@ -13,8 +13,8 @@ Objetivo final: construir un orquestador multi-agente autónomo de soporte de pe
 - Idioma de trabajo: español
 
 ## Estado actual
-**Última fase completada:** Fase 4 — Agente con memoria
-**Siguiente fase:** Fase 5 — Orquestador con 2 agentes
+**Última fase completada:** Fase 6 — Sistema multi-agente completo (Agente de Soporte de Pedidos)
+**Siguiente fase:** Fase 7 — Harness / LangGraph
 
 ## Protocolo de sesión
 1. `/clear` entre fases (no dentro de una fase)
@@ -30,9 +30,9 @@ Objetivo final: construir un orquestador multi-agente autónomo de soporte de pe
 | 2 | Prompt Engineering + Structured Output | ✅ Completa |
 | 3 | Tool Calling | ✅ Completa |
 | 4 | Agente con memoria | ✅ Completa |
-| 5 | Orquestador con 2 agentes | 🔜 Siguiente |
-| 6 | Sistema multi-agente completo (Agente de Soporte de Pedidos) | ⏳ Pendiente |
-| 7 | Harness / LangGraph | ⏳ Pendiente |
+| 5 | Orquestador con 2 agentes | ✅ Completa |
+| 6 | Sistema multi-agente completo (Agente de Soporte de Pedidos) | ✅ Completa |
+| 7 | Harness / LangGraph | 🔜 Siguiente |
 
 ## Cómo actualizar este archivo
 Al completar una fase: cambiar su estado de 🔜 a ✅ y actualizar "Estado actual".

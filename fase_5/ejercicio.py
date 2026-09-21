@@ -212,7 +212,7 @@ def ejecutar_respuesta(mensaje_usuario: str, clasificacion: dict) -> str:
         max_tokens=1024,
         system=system_ejecutor,
         messages=[{"role": "user", "content": mensaje_usuario}],
-        tools=tools_ejecutor#?___BLANK_4___
+        tools= tools_ejecutor if tipo == "consulta_pedido" else []
     )
 
     # -------------------------------------------------------------------
@@ -232,7 +232,36 @@ def ejecutar_respuesta(mensaje_usuario: str, clasificacion: dict) -> str:
     # dentro de una función que debe *retornar* el texto final.
 
     if respuesta.stop_reason == "tool_use":
-        ___BLANK_5___
+        # 2. Extraer el bloque tool_use (puede haber un bloque de texto antes)
+        bloque_tool = next(b for b in respuesta.content if b.type == "tool_use")
+
+        # 3. Ejecutar la función real
+        resultado = consultar_estado_pedido(bloque_tool.input["numero_pedido"])
+
+        # 4. Segunda llamada con historial de 3 mensajes
+        segunda_respuesta = cliente.messages.create(
+            model="claude-sonnet-5",
+            max_tokens=1024,
+            system=system_ejecutor,
+            tools=tools_ejecutor,
+            messages=[
+                {"role": "user", "content": mensaje_usuario},
+                {"role": "assistant", "content": respuesta.content },
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "tool_result",
+                            "tool_use_id": bloque_tool.id,
+                            "content": json.dumps(resultado),
+                        }
+                    ],
+                },
+            ],
+        )
+
+        # 5. Devolver el texto final
+        return segunda_respuesta.content[0].text
     else:
         return respuesta.content[0].text
 

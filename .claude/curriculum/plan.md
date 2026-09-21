@@ -96,23 +96,51 @@ append respuesta intermedia con tool_use, append tool_result, append respuesta f
 
 ---
 
-## Fase 5 — Orquestador con 2 agentes ⏳ PENDIENTE
+## Fase 5 — Orquestador con 2 agentes ✅ COMPLETA
+**Archivo:** `fase_5/ejercicio.py`
+
+**Conceptos cubiertos:**
+- Coordinación entre agentes especializados: Clasificador (JSON `{tipo, numero_pedido}`) + Ejecutor
+- Paso de información estructurada entre agentes (la salida del clasificador decide el system prompt del ejecutor)
+- System prompt condicional por `tipo` y tools solo para `consulta_pedido`
+- Ciclo tool_use dentro de una función que retorna el texto final
+- Todo mensaje del historial requiere `content` (error 400 `messages.1.content: Field required` al omitir `respuesta.content` en el mensaje assistant)
+
+**5 blanks resueltos:** system prompt del clasificador, llamada al clasificador, system prompt condicional del ejecutor,
+`tools=` condicional, ciclo tool_use con historial de 3 mensajes.
+
+---
+
+## Fase 6 — Sistema multi-agente completo ✅ COMPLETA
+**Archivo:** `fase_6/ejercicio.py`
+**Objetivo:** "Agente de Soporte de Pedidos" funcional end-to-end, integrando fases 2-5.
+
 **Conceptos a cubrir:**
-- Coordinación entre agentes especializados
-- Agente clasificador + agente ejecutor
-- Paso de información estructurada entre agentes
-- Cuándo usar un agente vs una función
+- Integrar clasificador + ejecutor + memoria + tools en un solo sistema
+- Varias tools y despachador `dict nombre → función`
+- Loop interno con límite de iteraciones (guardrail) y fallback a humano
+- Varios bloques `tool_use` en un mismo turno → un solo mensaje con todos los `tool_result`
+- Contexto del clasificador inyectado en el system prompt del ejecutor
+
+**6 blanks:** schema de `crear_reclamo`, despachador `FUNCIONES`, system prompt del ejecutor,
+condición de salida del loop, ejecución de todas las tools, memoria entre turnos.
+
+**Lecciones aprendidas:**
+- Una función que construye un prompt debe hacer `return`: sin él devuelve `None` y la API responde 400 `system: Input should be a valid array`
+- El system prompt debe prohibir inventar no solo datos (estados, IDs) sino también procesos, políticas, canales y acciones que no existen como tool (si no, el modelo alucina "pasos" y ofrece cosas imposibles)
+- El clasificador sin memoria etiqueta mal los mensajes de seguimiento (ej. solo "RP-1002" → `consulta_pedido`); el ejecutor lo compensa porque sí ve el historial
+- Edge case conocido: si se agotan las `MAX_ITERACIONES`, el historial termina en un `user` y el siguiente turno haría dos `user` seguidos
 
 ---
 
-## Fase 6 — Sistema multi-agente completo ⏳ PENDIENTE
-**Objetivo:** "Agente de Soporte de Pedidos" funcional end-to-end
-Sistema completo integrando todas las fases anteriores.
-
----
-
-## Fase 7 — Harness / LangGraph ⏳ PENDIENTE
+## Fase 7 — Harness / LangGraph 🔜 SIGUIENTE
 **Conceptos a cubrir:**
 - Frameworks de orquestación vs implementación manual
 - LangGraph: nodos, edges, state
 - Cuándo vale la pena usar un framework vs código propio
+
+**Pendientes heredados de la Fase 6 (resolver con el state de LangGraph):**
+- `crear_reclamo` genera el ID desde el número de pedido (`REC-{últimos 4}`) y no guarda nada: dos reclamos del mismo pedido colisionan en `REC-1001`. Solución: store con IDs únicos (+ opcional tool `consultar_reclamo`).
+- El clasificador no tiene memoria y etiqueta mal los seguimientos.
+- Edge case de `MAX_ITERACIONES`: el historial termina en `user` y el siguiente turno duplica `user`.
+- Extraer texto con `next(b.text for b in content if b.type == "text")`, no `content[0].text` (puede venir un `ThinkingBlock` primero). Fase 5 aún usa `content[0]`.
