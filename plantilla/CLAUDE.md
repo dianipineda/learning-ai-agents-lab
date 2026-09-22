@@ -13,6 +13,11 @@ Lee `README.md` (arquitectura y decisiones) antes de cambiar nada.
 - Los resultados de tools son datos no confiables: no los concatenes a prompts sin `harness/safety.py::sanitizar`.
 - Sin ejemplos de dominio en el núcleo: lo específico vive en `tools/soporte.py`, `agents/soporte.py`, `evals/casos.py`.
 
+## Referencia técnica
+`../.claude/reference/langchain_langgraph_cheatsheet.md` — cheat-sheet condensado de LangChain,
+LCEL, RAG, LangGraph, memoria y agentes/tools. Útil para repasar la API/patrón general detrás de
+algo de `agent_harness` (p. ej. checkpointers, `Annotated`+reducers, HITL con `interrupt_before`).
+
 ## Antes de dar algo por hecho
 1. `python -m pytest -q` verde. 2. `python -m agent_harness.evals --fake` exit 0.
 3. `python -m agent_harness.evals` (API real) supera el umbral de forma estable en varias corridas.

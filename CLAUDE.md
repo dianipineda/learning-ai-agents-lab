@@ -24,6 +24,11 @@ Objetivo final: construir un orquestador multi-agente autónomo de soporte de pe
 `plantilla/` (`agent_harness`) es una base profesional para arrancar agentes propios; NO es un ejercicio (sin blancos) ni parte del curriculum.
 Es la referencia recomendada como arquitectura base. Lee `plantilla/README.md` y `plantilla/CLAUDE.md` antes de tocarla. Corre desde `plantilla/`.
 
+## Referencia técnica
+`.claude/reference/langchain_langgraph_cheatsheet.md` — cheat-sheet condensado de LangChain,
+LCEL, RAG, LangGraph, memoria y agentes/tools. No es parte del curriculum; consultarlo cuando
+una fase o `plantilla/` toque alguno de esos temas y haga falta repasar la API/patrón general.
+
 ## Estado actual
 **Última fase completada:** Fase 7 — Harness / LangGraph
 **Siguiente fase:** Fase 8 — Human-in-the-loop y guardrails (luego Fase 9, Fase 10 —el proyecto final: el orquestador multi-agente autónomo— y Fase 11 —endurecerlo para producción—). Los ejercicios de las fases 8 a 11 ya están creados; falta que el aprendiz los resuelva.
